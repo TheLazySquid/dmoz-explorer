@@ -1,6 +1,6 @@
 # DMOZ Explorer
 
-This is a simple site to look through random sites from [DMOZ](https://en.wikipedia.org/wiki/DMOZ), an old directory of websites. Many site will be dead or updated, but some are still alive as time capsules from the old days of the internet.
+This is a simple site to look through random sites from [DMOZ](https://en.wikipedia.org/wiki/DMOZ), an old directory of websites. Many site will be dead or updated, but some are still alive as time capsules from the old days of the internet. You can try it out at https://thelazysquid.github.io/dmoz-explorer.
 
 ![A preview of the site](/images/preview.png)
 
