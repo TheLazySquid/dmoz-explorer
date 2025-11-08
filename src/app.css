@@ -1,0 +1,19 @@
+@import 'tailwindcss';
+
+@theme {
+    --color-background: #18181B;
+    --color-foreground: #282828;
+}
+
+html, body {
+    @apply h-full;
+}
+
+body {
+    @apply bg-background;
+    font-family: Verdana, Geneva, Tahoma, sans-serif;
+}
+
+button {
+    @apply cursor-pointer;
+}
