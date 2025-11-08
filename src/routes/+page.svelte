@@ -8,15 +8,16 @@
         <div class="p-5 rounded-lg bg-foreground flex flex-col"
             style="width: min(1000px, 90vw); min-height: min(250px, 90vh);">
             {#if URLs.errored}
-                <div class="text-3xl font-bold">Failed to load urls</div>
+                <div class="text-base sm:text-xl md:text-3xl font-bold">Failed to load urls</div>
             {:else if URLs.currentUrl}
-                <div class="text-3xl font-bold wrap-break-word">
+                <div class="text-base sm:text-xl md:text-3xl font-bold wrap-break-word">
                     {URLs.currentUrl.url}
                 </div>
-                <div class="grow mb-5">
+                <div class="grow mb-5 text-sm sm:text-base">
                     {URLs.currentUrl.category}
                 </div>
-                <div class="flex w-full items-center gap-2.5 text-lg *:rounded-xl *:bg-white *:text-black *:px-5 *:py-2.5">
+                <div class="flex w-full items-center gap-2.5 text-base sm:text-lg
+                *:rounded-md sm:*:rounded-xl *:bg-white *:text-black *:px-2 *:py-1 sm:*:px-5 sm:*:py-2.5">
                     {#if URLs.backStack.length > 0}
                         <button onclick={() => URLs.back()}>Back</button>
                     {/if}
