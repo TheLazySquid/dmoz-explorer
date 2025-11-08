@@ -4,4 +4,4 @@ This is a simple tool to look through random sites from [DMOZ](https://en.wikipe
 
 ![A preview of the site](/images/preview.png)
 
-This site has roughly 1.5 million possible urls. It's not entirely clear when the snapshot that this site uses is from, but I estimate around 2002.
+This site has roughly 1.5 million possible urls, with some dead domains removed. It's not entirely clear when the snapshot that this site uses is from, but I estimate around 2002.

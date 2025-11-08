@@ -6,6 +6,8 @@ interface Option {
     category: string;
 }
 
+const version = "1";
+
 export default new class URLs {
     urls: Record<string, string[]> = {};
     totalUrls = $state(0);
@@ -28,11 +30,17 @@ export default new class URLs {
     }
 
     async load() {
-        const saved = await get<File>("urls.txt");
+        const savedVersion = localStorage.getItem("urls-version");
         
-        if(saved) {
-            const text = await saved.text();
-            this.loadText(text);
+        if(savedVersion === version) {
+            const saved = await get<File>("urls.txt");
+
+            if(saved) {
+                const text = await saved.text();
+                this.loadText(text);
+            } else {
+                await this.fetch();
+            }
         } else {
             await this.fetch();
         }
@@ -75,6 +83,7 @@ export default new class URLs {
 
         const file = new File([text], "urls.txt", { type: "text/plain" });
         set("urls.txt", file);
+        localStorage.setItem("urls-version", version);
     }
 
     loadText(text: string) {
