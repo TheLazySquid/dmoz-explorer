@@ -7,7 +7,9 @@
     <div class="flex flex-col justify-center gap-2">
         <div class="p-5 rounded-lg bg-foreground flex flex-col"
             style="width: min(1000px, 90vw); min-height: min(250px, 90vh);">
-            {#if URLs.currentUrl}
+            {#if URLs.errored}
+                <div class="text-3xl font-bold">Failed to load urls</div>
+            {:else if URLs.currentUrl}
                 <div class="text-3xl font-bold wrap-break-word">
                     {URLs.currentUrl.url}
                 </div>
@@ -30,12 +32,14 @@
                 <BarLoader size="120" color="white" />
             {/if}
         </div>
-        <select class="bg-foreground p-2 w-60 rounded-lg"
-            bind:value={URLs.category} onchange={() => URLs.updateCategory()}>
-            <option value="*">All sites</option>
-            {#each URLs.categories as category}
-                <option value={category}>{category}</option>
-            {/each}
-        </select>
+        {#if URLs.categories.length > 0}
+            <select class="bg-foreground p-2 w-60 rounded-lg"
+                bind:value={URLs.category} onchange={() => URLs.updateCategory()}>
+                <option value="*">All sites</option>
+                {#each URLs.categories as category}
+                    <option value={category}>{category}</option>
+                {/each}
+            </select>
+        {/if}
     </div>
 </div>

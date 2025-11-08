@@ -1,5 +1,5 @@
 import { decompressUrl } from "./util";
-import { get, set } from "idb-keyval";
+import { get, set, del } from "idb-keyval";
 
 interface Option {
     url: string;
@@ -14,9 +14,17 @@ export default new class URLs {
     nextStack: Option[] = [];
     categories: string[] = $state([]);
     category = $state("*");
+    errored = $state(false);
 
     constructor() {
-        this.load();
+        try {
+            this.load();
+        } catch {
+            this.errored = true;
+
+            // Just in case something got corrupted
+            del("urls.txt");
+        }
     }
 
     async load() {
