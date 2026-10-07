@@ -8,6 +8,11 @@ const config = {
 		adapter: adapter(),
 		paths: {
 			base: "/dmoz-explorer"
+		},
+		typescript: {
+			config: (cfg) => {
+				cfg.include.push("../scripts/**/*.ts");
+			}
 		}
 	}
 };

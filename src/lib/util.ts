@@ -58,3 +58,15 @@ export function decompressUrl(compressed: string) {
 
     return compressed;
 }
+
+export function addCommas(num: number) {
+    const chars = num.toString().split("").reverse();
+    let output = "";
+
+    for(let i = 0; i < chars.length; i++) {
+        if(i > 0 && i % 3 === 0) output = "," + output;
+        output = chars[i] + output;
+    }
+
+    return output;
+}

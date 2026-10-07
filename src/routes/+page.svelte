@@ -1,5 +1,6 @@
 <script lang="ts">
     import URLs from "$lib/urls.svelte";
+    import { addCommas } from "$lib/util";
     import { BarLoader } from "svelte-loading-spinners";
 </script>
 
@@ -33,14 +34,23 @@
                 <BarLoader size="120" color="white" />
             {/if}
         </div>
-        {#if URLs.categories.length > 0}
+        <div class="flex items-center gap-2.5">
+            {#if URLs.categories.length > 0}
+                <select class="bg-foreground p-2 w-60 rounded-lg"
+                    bind:value={URLs.category} onchange={() => URLs.onSettingsChange()}>
+                    <option value="*">All sites</option>
+                    {#each URLs.categories as category}
+                        <option value={category}>{category}</option>
+                    {/each}
+                </select>
+            {/if}
             <select class="bg-foreground p-2 w-60 rounded-lg"
-                bind:value={URLs.category} onchange={() => URLs.updateCategory()}>
-                <option value="*">All sites</option>
-                {#each URLs.categories as category}
-                    <option value={category}>{category}</option>
-                {/each}
+                bind:value={URLs.includeDead} onchange={() => URLs.onSettingsChange()}>
+                <option value="alive">Hide known dead</option>
+                <option value="both">Show all sites</option>
+                <option value="dead">Only known dead</option>
             </select>
-        {/if}
+            <p class="text-sm">{addCommas(URLs.total)} urls</p>
+        </div>
     </div>
 </div>

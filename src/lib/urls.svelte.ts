@@ -1,22 +1,41 @@
+import { randomIndex, randomItem, select } from "./rng";
 import { decompressUrl } from "./util";
 import { get, set, del } from "idb-keyval";
+
+export type UrlType = "alive" | "dead" | "both";
 
 interface Option {
     url: string;
     category: string;
 }
 
-const version = "1";
+const version = "2";
 
 export default new class URLs {
-    urls: Record<string, string[]> = {};
-    totalUrls = $state(0);
+    aliveUrls: Record<string, string[]> = {};
+    deadUrls: Record<string, string[]> = {};
+    totalAlive = $state(0);
+    totalDead = $state(0);
     currentUrl: Option | null = $state(null);
     backStack: Option[] = $state([]);
     nextStack: Option[] = [];
     categories: string[] = $state([]);
     category = $state("*");
+    includeDead: UrlType = $state("alive");
     errored = $state(false);
+    total = $derived.by(() => {
+        if(this.category === "*") {
+            if(this.includeDead === "alive") return this.totalAlive;
+            if(this.includeDead === "dead") return this.totalDead;
+            return this.totalAlive + this.totalDead;
+        } else {
+            const alive = this.aliveUrls[this.category].length;
+            const dead = this.deadUrls[this.category].length;
+            if(this.includeDead === "alive") return alive;
+            if(this.includeDead === "dead") return dead;
+            return alive + dead;
+        }
+    });
 
     constructor() {
         try {
@@ -30,8 +49,9 @@ export default new class URLs {
     }
 
     async load() {
-        const savedVersion = localStorage.getItem("urls-version");
-        
+        // const savedVersion = localStorage.getItem("urls-version");
+        const savedVersion: string = "swag";
+
         if(savedVersion === version) {
             const saved = await get<File>("urls.txt");
 
@@ -69,7 +89,7 @@ export default new class URLs {
         this.currentUrl = previous;
     }
 
-    updateCategory() {
+    onSettingsChange() {
         this.backStack = [];
         this.nextStack = [];
         this.currentUrl = this.getUrl();
@@ -93,32 +113,41 @@ export default new class URLs {
         if(!header) return;
 
         const parts = header.split(",");
-        this.totalUrls = urls.length;
 
         let startIndex = 0;
-        for(let i = 0; i < parts.length; i += 2) {
-            const length = Number(parts[i]);
-            const category = parts[i + 1];
+        for(let i = 0; i < parts.length; i += 3) {
+            const aliveCount = Number(parts[i]);
+            const deadCount = Number(parts[i + 1]);
+            const category = parts[i + 2];
             this.categories.push(category);
 
-            this.urls[category] = urls.slice(startIndex, startIndex + length);
-            startIndex += length;
+            this.aliveUrls[category] = urls.slice(startIndex, startIndex + aliveCount);
+            startIndex += aliveCount;
+            this.totalAlive += aliveCount;
+
+            this.deadUrls[category] = urls.slice(startIndex, startIndex + deadCount);
+            startIndex += deadCount;
+            this.totalDead += deadCount;
         }
+
+        console.log(this.aliveUrls, this.deadUrls);
     }
 
     getUrl(): Option {
         if(this.category !== "*") {
-            const list = this.urls[this.category];
-            const index = Math.floor(Math.random() * list.length);
+            const alive = this.aliveUrls[this.category];
+            const dead = this.deadUrls[this.category];
+            const list = select(this.includeDead, alive, dead, alive.length, dead.length);
             
             return {
-                url: decompressUrl(list[index]),
+                url: decompressUrl(randomItem(list)),
                 category: this.category
             }
         } else {
             // Get a random category, without being biased by category size
-            const categories = Object.entries(this.urls);
-            let index = Math.floor(Math.random() * this.totalUrls);
+            const urls = select(this.includeDead, this.aliveUrls, this.deadUrls, this.totalAlive, this.totalDead);
+            const categories = Object.entries(urls);
+            let index = randomIndex(categories.reduce((sum, [_, urls]) => sum + urls.length, 0));
             
             let categoryIndex = 0;
             while(index > categories[categoryIndex][1].length) {
@@ -128,7 +157,7 @@ export default new class URLs {
 
             const category = categories[categoryIndex][0];
             return {
-                url: decompressUrl(this.urls[category][index]),
+                url: decompressUrl(urls[category][index]),
                 category
             }
         }
