@@ -49,8 +49,7 @@ export default new class URLs {
     }
 
     async load() {
-        // const savedVersion = localStorage.getItem("urls-version");
-        const savedVersion: string = "swag";
+        const savedVersion = localStorage.getItem("urls-version");
 
         if(savedVersion === version) {
             const saved = await get<File>("urls.txt");
